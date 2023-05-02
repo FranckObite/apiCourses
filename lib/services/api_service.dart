@@ -1,3 +1,5 @@
+import 'package:api_application/models/movie.dart';
+
 import 'api.dart';
 import 'package:dio/dio.dart';
 
@@ -23,6 +25,25 @@ class APIService {
     //on veriefie si la requete c'est bien passée
     if (response.statusCode == 200) {
       return response;
+    } else {
+      throw response;
+    }
+  }
+
+  Future<List<Movie>> getPopularMovies({required int pageNumber}) async {
+    Response response =
+        await getData("/movie/popular", params: {'page': pageNumber});
+
+    if (response.statusCode == 200) {
+      Map data = response.data;
+      List<dynamic> results = data['results'];
+      List<Movie> movies = [];
+      for (Map<String, dynamic> json in results) {
+        Movie movie = Movie.fromJson(json);
+        movies.add(movie);
+      }
+
+      return movies;
     } else {
       throw response;
     }
